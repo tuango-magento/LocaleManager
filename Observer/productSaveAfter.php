@@ -26,18 +26,25 @@ class productSaveAfter implements ObserverInterface
     protected $scopeConfig;
 
     /**
+     * @var \Magento\Catalog\Model\Product
+     */
+    protected $product;
+
+    /**
      * @param \Magento\Framework\ObjectManagerInterface $objectManager
      */
     public function __construct(
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Catalog\Model\Product $product
     ) {
         $this->logger = $logger;
         $this->_objectManager = $objectManager;
         $this->storeManager = $storeManager;
         $this->scopeConfig = $scopeConfig;
+        $this->product = $product;
     }
 
     /**
@@ -61,7 +68,7 @@ class productSaveAfter implements ObserverInterface
             });
 
             foreach($targetStores as $targetStoreID => $targetStoreLocale) {
-                $this->_objectManager->create('Magento\Catalog\Model\Product')
+                $this->product
                     ->setStoreId($product->getStoreId())
                     ->load($product->getId())
                     ->setStoreId($targetStoreID)
@@ -69,7 +76,6 @@ class productSaveAfter implements ObserverInterface
                     ->save();
             }
         }
-
 
     }
 
